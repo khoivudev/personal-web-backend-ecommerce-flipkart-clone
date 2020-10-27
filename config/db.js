@@ -6,6 +6,7 @@ mongoose.Promise = global.Promise;
 
 mongoose
   .connect(process.env.MONGODB_URL, {
+    useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
