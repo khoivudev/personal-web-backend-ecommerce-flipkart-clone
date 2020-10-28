@@ -1,28 +1,14 @@
 var express = require("express");
 var router = express.Router();
-var { signup, signin, requireSignin } = require("../../controllers/admin/auth");
+var { signup, signin } = require("../../controllers/admin/auth");
 const {
   validationSignupRequest,
   validationSigninRequest,
   isRequestValidated,
 } = require("../../validators/auth");
 
-router.post(
-  "/admin/signup",
-  validationSignupRequest,
-  isRequestValidated,
-  signup
-);
+router.post("/signup", validationSignupRequest, isRequestValidated, signup);
 
-router.post(
-  "/admin/signin",
-  validationSigninRequest,
-  isRequestValidated,
-  signin
-);
-
-router.get("/admin/profile", requireSignin, (req, res) => {
-  res.status(200).json({ admin: "profile" });
-});
+router.post("/signin", validationSigninRequest, isRequestValidated, signin);
 
 module.exports = router;
