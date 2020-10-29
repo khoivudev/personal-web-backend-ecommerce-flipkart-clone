@@ -5,6 +5,7 @@ var express = require("express");
 var authRoutes = require("./routes/auth");
 var adminRoutes = require("./routes/admin/auth");
 var categoryRoutes = require("./routes/category");
+var productRoutes = require("./routes/product");
 
 var app = express();
 
@@ -14,6 +15,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/auth", authRoutes);
 app.use("/api/auth/admin", adminRoutes);
 app.use("/api/category", categoryRoutes);
+app.use("/api/product", productRoutes);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
