@@ -3,6 +3,7 @@ require("./config/db");
 var express = require("express");
 var app = express();
 var path = require("path");
+var cors = require("cors");
 
 var authRoutes = require("./routes/auth");
 var adminRoutes = require("./routes/admin/auth");
@@ -10,6 +11,7 @@ var categoryRoutes = require("./routes/category");
 var productRoutes = require("./routes/product");
 var cartRoutes = require("./routes/cart");
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

@@ -4,8 +4,8 @@ var jwt = require("jsonwebtoken");
 exports.signup = (req, res) => {
   User.findOne({ email: req.body.email }).then((user) => {
     if (user) {
-      return res.status(200).json({
-        message: "User already registed",
+      return res.status(400).json({
+        error: "User already registed",
       });
     } else {
       const { firstName, lastName, email, password } = req.body;
@@ -21,13 +21,12 @@ exports.signup = (req, res) => {
       _user
         .save()
         .then((data) => {
-          return res.status(201).json({
+          return res.status(200).json({
             message: "User created successfully!",
           });
         })
-        .catch((err) => {
-          console.log(err);
-          return res.status(400).json({ message: "Something went wrong" });
+        .catch((error) => {
+          return res.status(400).json(error);
         });
     }
   });
@@ -58,13 +57,13 @@ exports.signin = (req, res, next) => {
             },
           });
         } else {
-          return res.status(400).json({ message: "Invalid password" });
+          return res.status(400).json({ error: "Invalid password" });
         }
       } else {
-        return res.status(400).json({ message: "Something went wrong" });
+        return res.status(400).json({ error: "Something went wrong" });
       }
     })
-    .catch((err) => {
-      return res.status(400).json({ error });
+    .catch((error) => {
+      return res.status(400).json(error);
     });
 };
