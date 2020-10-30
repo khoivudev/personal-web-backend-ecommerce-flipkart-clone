@@ -14,6 +14,7 @@ function createCategories(categories, parentId = null) {
       _id: cate._id,
       name: cate.name,
       slug: cate.slug,
+      parentId: cate.parentId,
       children: createCategories(categories, cate._id),
     });
   }
@@ -40,10 +41,10 @@ exports.addCategory = (req, res, next) => {
   cat
     .save()
     .then((category) => {
-      return res.status(201).json({ category });
+      return res.status(200).json({ category });
     })
-    .catch((err) => {
-      return res.status(400).json({ err });
+    .catch((error) => {
+      return res.status(400).json({ error });
     });
 };
 
@@ -53,7 +54,7 @@ exports.getCategories = (req, res, next) => {
       const categoryList = createCategories(categories);
       res.status(200).json({ categoryList });
     })
-    .catch((err) => {
-      return res.status(400).json({ err });
+    .catch((error) => {
+      return res.status(400).json({ error });
     });
 };
