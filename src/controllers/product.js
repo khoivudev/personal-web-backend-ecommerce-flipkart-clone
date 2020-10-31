@@ -32,3 +32,13 @@ exports.createProduct = (req, res) => {
       res.status(400).json({ error });
     });
 };
+
+exports.getProducts = (req, res, next) => {
+  Product.find({})
+    .then((products) => {
+      res.status(200).json({ products });
+    })
+    .catch((error) => {
+      return res.status(400).json({ error });
+    });
+};

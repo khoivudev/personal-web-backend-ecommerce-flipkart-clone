@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var { requireSignin, adminMiddleware } = require("../common-middleware");
-var { createProduct } = require("../controllers/product");
+var { createProduct, getProducts } = require("../controllers/product");
 var shortid = require("shortid");
 var multer = require("multer");
 var path = require("path");
@@ -24,5 +24,7 @@ router.post(
   upload.array("productPicture"),
   createProduct
 );
+
+router.get("/getproduct", getProducts);
 
 module.exports = router;
