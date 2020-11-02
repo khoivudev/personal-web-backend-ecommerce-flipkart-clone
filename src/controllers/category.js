@@ -21,7 +21,7 @@ function createCategories(categories, parentId = null) {
   return categoryList;
 }
 
-exports.addCategory = (req, res, next) => {
+exports.addCategory = (req, res) => {
   const categoryObj = {
     name: req.body.name,
     slug: slugify(req.body.name),
@@ -32,8 +32,12 @@ exports.addCategory = (req, res, next) => {
       process.env.API_URL + "/public/" + req.file.filename;
   }
 
-  if (req.body.parentId) {
+  if (req.body.parentId !== "" && req.body.parentId !== undefined) {
     categoryObj.parentId = req.body.parentId;
+  }
+
+  if (req.body.type !== "" && req.body.type !== undefined) {
+    categoryObj.type = req.body.type;
   }
 
   const cat = new Category(categoryObj);
@@ -48,7 +52,7 @@ exports.addCategory = (req, res, next) => {
     });
 };
 
-exports.getCategories = (req, res, next) => {
+exports.getCategories = (req, res) => {
   Category.find({})
     .then((categories) => {
       const categoryList = createCategories(categories);
@@ -57,4 +61,50 @@ exports.getCategories = (req, res, next) => {
     .catch((error) => {
       return res.status(400).json({ error });
     });
+};
+
+exports.updateCategories = async (req, res) => {
+  const { _id, name, parentId, type } = req.body;
+  const updatedCategories = [];
+  if (_id instanceof Array) {
+    for (let i = 0; i < _id.length; i++) {
+      const toUpdateCategory = {
+        name: name[i],
+        slug: slugify(name[i]),
+      };
+      if (type[i] !== "" && type[i] !== undefined) {
+        toUpdateCategory.type = type[i];
+      }
+
+      if (parentId[i] !== "" && type[i] !== undefined) {
+        toUpdateCategory.parentId = parentId[i];
+      }
+
+      const updatedCategory = await Category.findOneAndUpdate(
+        { _id: _id[i] },
+        toUpdateCategory,
+        { useFindAndModify: false, new: true }
+      );
+      updatedCategories.push(updatedCategory);
+    }
+    res.status(200).json(updatedCategories);
+  } else {
+    const toUpdateCategory = {
+      name,
+      slug: slugify(name),
+    };
+    if (type !== "" && type !== undefined) {
+      toUpdateCategory.type = type;
+    }
+
+    if (parentId !== "" && parentId !== undefined) {
+      toUpdateCategory.parentId = parentId;
+    }
+    const updatedCategory = await Category.findOneAndUpdate(
+      { _id: _id },
+      toUpdateCategory,
+      { useFindAndModify: false, new: true }
+    );
+    res.status(200).json(updatedCategory);
+  }
 };
