@@ -5,6 +5,7 @@ var {
   addCategory,
   getCategories,
   updateCategories,
+  deleteCategories,
 } = require("../controllers/category");
 
 var shortid = require("shortid");
@@ -38,5 +39,7 @@ router.post(
   upload.array("categoryImage"),
   updateCategories
 );
+
+router.delete("/delete", requireSignin, adminMiddleware, deleteCategories);
 
 module.exports = router;

@@ -15,7 +15,7 @@ exports.createProduct = (req, res) => {
 
   const product = new Product({
     name,
-    slug: slugify(name),
+    slug: `${slugify(name)}-${shortid.generate()}`,
     price,
     quantity,
     description,
