@@ -2,6 +2,13 @@ var Category = require("../models/category");
 var slugify = require("slugify");
 const shortid = require("shortid");
 
+async function checkExistedCategory(toCheckId) {
+  const categoryIds = (await Category.find({}).select("_id").exec()).map(
+    (obj) => `${obj._id}`
+  );
+  return categoryIds.includes(toCheckId);
+}
+
 function createCategories(categories, parentId = null) {
   const categoryList = [];
   let category;
@@ -16,6 +23,7 @@ function createCategories(categories, parentId = null) {
       name: cate.name,
       slug: cate.slug,
       parentId: cate.parentId,
+      type: cate.type,
       children: createCategories(categories, cate._id),
     });
   }
@@ -75,10 +83,21 @@ exports.updateCategories = async (req, res) => {
       };
       if (type[i] !== "" && type[i] !== undefined) {
         toUpdateCategory.type = type[i];
+      } else {
+        toUpdateCategory.type = null;
       }
 
-      if (parentId[i] !== "" && type[i] !== undefined) {
-        toUpdateCategory.parentId = parentId[i];
+      if (parentId[i] !== "" && parentId[i] !== undefined) {
+        const isExistedCategory = await checkExistedCategory(parentId[i]);
+        if (isExistedCategory > 0) {
+          toUpdateCategory.parentId = parentId[i];
+        } else {
+          return res
+            .status(400)
+            .json({ error: "Parent Category is not exist" });
+        }
+      } else {
+        toUpdateCategory.parentId = null;
       }
 
       const updatedCategory = await Category.findOneAndUpdate(
@@ -88,7 +107,7 @@ exports.updateCategories = async (req, res) => {
       );
       updatedCategories.push(updatedCategory);
     }
-    res.status(200).json(updatedCategories);
+    return res.status(200).json(updatedCategories);
   } else {
     const toUpdateCategory = {
       name,
@@ -96,17 +115,27 @@ exports.updateCategories = async (req, res) => {
     };
     if (type !== "" && type !== undefined) {
       toUpdateCategory.type = type;
+    } else {
+      toUpdateCategory.type = null;
     }
 
     if (parentId !== "" && parentId !== undefined) {
-      toUpdateCategory.parentId = parentId;
+      const isExistedCategory = await checkExistedCategory(parentId);
+      console.log(isExistedCategory);
+      if (isExistedCategory > 0) {
+        toUpdateCategory.parentId = parentId;
+      } else {
+        return res.status(400).json({ error: "Parent Category is not exist" });
+      }
+    } else {
+      toUpdateCategory.parentId = null;
     }
     const updatedCategory = await Category.findOneAndUpdate(
       { _id: _id },
       toUpdateCategory,
       { useFindAndModify: false, new: true }
     );
-    res.status(200).json(updatedCategory);
+    return res.status(200).json(updatedCategory);
   }
 };
 
