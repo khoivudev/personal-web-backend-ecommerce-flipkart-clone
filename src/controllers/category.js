@@ -89,7 +89,7 @@ exports.updateCategories = async (req, res) => {
 
       if (parentId[i] !== "" && parentId[i] !== undefined) {
         const isExistedCategory = await checkExistedCategory(parentId[i]);
-        if (isExistedCategory > 0) {
+        if (isExistedCategory) {
           toUpdateCategory.parentId = parentId[i];
         } else {
           return res
@@ -121,8 +121,7 @@ exports.updateCategories = async (req, res) => {
 
     if (parentId !== "" && parentId !== undefined) {
       const isExistedCategory = await checkExistedCategory(parentId);
-      console.log(isExistedCategory);
-      if (isExistedCategory > 0) {
+      if (isExistedCategory) {
         toUpdateCategory.parentId = parentId;
       } else {
         return res.status(400).json({ error: "Parent Category is not exist" });

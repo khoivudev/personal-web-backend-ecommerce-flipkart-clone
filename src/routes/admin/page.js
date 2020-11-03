@@ -5,7 +5,7 @@ var {
   adminMiddleware,
   upload,
 } = require("../../common-middleware");
-var { createPage } = require("../../controllers/admin/page");
+var { createPage, getPage } = require("../../controllers/admin/page");
 
 router.post(
   "/create",
@@ -22,5 +22,7 @@ router.post(
   ]),
   createPage
 );
+
+router.get("/:category/:type", getPage);
 
 module.exports = router;
