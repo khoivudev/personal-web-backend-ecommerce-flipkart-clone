@@ -5,6 +5,7 @@ var {
   createProduct,
   getProducts,
   getProductsByCategorySlug,
+  getProductDetailsById,
 } = require("../controllers/product");
 var shortid = require("shortid");
 var multer = require("multer");
@@ -32,5 +33,7 @@ router.post(
 router.get("/getproduct", getProducts);
 
 router.get("/:category_slug", getProductsByCategorySlug);
+
+router.get("/details/:productId", getProductDetailsById);
 
 module.exports = router;
